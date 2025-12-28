@@ -1,47 +1,35 @@
-/*
-  RAW DEMO: Calm Breathing Guide on 0.96" OLED (128x64, I2C 0x3C)
-
-  What you’ll see:
-  - Normal screen: HR + BT + Status
-  - If BOTH are "high" for 3 seconds -> Calm Mode starts
-  - Calm Mode: 1 minute breathing guide (4s IN / 6s OUT), bar animation + countdown
-
-  No sensors needed. It simulates HR/BT.
-  Optional: connect a button to pin 3 (to GND) to toggle "high arousal" instantly.
-*/
-
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 
-// Optional button (press = force high arousal)
+
 #define BUTTON_PIN 3
 
-// ---- thresholds ----
+// Threshold of the datas
 const int   HR_HIGH_BPM = 90;
 const float BT_HIGH_C   = 36.9;
 
-// faster demo trigger (3s) so you can see it quickly
+// Chaneg in 3s
 const unsigned long HOLD_MS = 3000;
 
-// total calm duration (change to 120000 for 2 min)
+// total calm duration is 1 min
 const unsigned long CALM_TOTAL_MS = 60UL * 1000UL;
 
-// breathing pattern: 4 in / 6 out (10s)
+// The breathing pattern is like 4 in 6 out, I've already put it into the refernece page as we can write the rationale and reports. 
 const unsigned long IN_MS = 4000;
 const unsigned long OUT_MS = 6000;
 const unsigned long CYCLE_MS = IN_MS + OUT_MS;
 
-// frame rate
+// Frame rate 
 const unsigned long FRAME_MS = 80;
 unsigned long lastFrame = 0;
 
-// ---- simulated sensor values ----
+//Change here, This is the estimate values, repalce with the sensors' values. 
 int currBpm = 72;
 float currTempC = 36.5;
 
-// ---- state ----
+// Mode of the system
 bool calmMode = false;
 bool bothHigh = false;
 unsigned long bothHighSince = 0;
@@ -50,7 +38,7 @@ unsigned long calmStart = 0;
 bool forceHigh = false;
 bool buttonPressed = false;
 
-// ---- helpers ----
+// here is the thershold setting, I set it with 98 and 37.1. 
 bool isBothHigh(int bpm, float tC) {
   return (bpm >= HR_HIGH_BPM) && (tC >= BT_HIGH_C);
 }
